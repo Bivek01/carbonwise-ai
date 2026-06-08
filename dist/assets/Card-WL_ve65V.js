@@ -1,1 +1,0 @@
-import{j as n,m as r}from"./index-DypPKi_L.js";const d=({children:i,className:t="",hover:a=!1,delay:o=0,...s})=>n.jsx(r.div,{initial:{opacity:0,y:20},animate:{opacity:1,y:0},transition:{duration:.5,delay:o},whileHover:a?{y:-5,transition:{duration:.2}}:{},className:`glass-panel rounded-2xl p-6 ${a?"hover:shadow-xl transition-shadow":""} ${t}`,...s,children:i});export{d as C};
