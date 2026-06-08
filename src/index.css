@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900;
+  }
+  
+  /* Global high-contrast focus indicator for keyboard users */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-forest-600 ring-offset-2 ring-offset-slate-50 rounded-sm;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-lg;
+  }
+  
+  .glass-panel {
+    @apply bg-white/60 backdrop-blur-lg border border-white/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)];
+  }
+
+  .glass-dark {
+    @apply bg-slate-900/70 backdrop-blur-md border border-slate-700/50 shadow-lg text-white;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-forest-600 to-leaf;
+  }
+}
