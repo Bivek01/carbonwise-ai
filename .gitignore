@@ -1,3 +1,13 @@
 node_modules
 dist
 .env
+.agents/
+.cursor/
+.jetro/
+.mcp.json
+.windsurfrules
+AGENT.md
+CLAUDE.md
+node_modules/
+dist/
+.env
