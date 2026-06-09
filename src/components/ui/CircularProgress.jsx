@@ -1,7 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 
-const CircularProgress = ({ value, max = 100, size = 200, strokeWidth = 15, label = "Score" }) => {
+const CircularProgress = React.memo(({ value, max = 100, size = 200, strokeWidth = 15, label = "Score" }) => {
   const [currentValue, setCurrentValue] = useState(0);
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -64,6 +64,7 @@ const CircularProgress = ({ value, max = 100, size = 200, strokeWidth = 15, labe
       </div>
     </div>
   );
-};
+});
 
+CircularProgress.displayName = 'CircularProgress';
 export default CircularProgress;

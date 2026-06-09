@@ -1,77 +1,11 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Award, Star, CheckCircle, Clock, Calendar, Leaf, Shield, Zap } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import { DAILY_TASKS, INITIAL_LONG_TERM_CHALLENGES } from '../lib/constants';
 
-const dailyTasks = [
-  "Take a 5-minute shower to save water.",
-  "Use public transport or carpool today.",
-  "Unplug all unused electronics before sleeping.",
-  "Bring a reusable bag for any shopping today.",
-  "Eat a fully plant-based meal today.",
-  "Avoid all single-use plastics today.",
-  "Turn off lights when leaving a room."
-];
-
-const initialLongTermChallenges = [
-  {
-    id: 1,
-    title: "Zero Waste Week",
-    description: "Produce zero non-recyclable or non-compostable waste for 7 consecutive days.",
-    points: 500,
-    progress: 7,
-    total: 7,
-    status: "completed"
-  },
-  {
-    id: 2,
-    title: "Commuter Champion",
-    description: "Use public transport, walk, or bike to work for 10 days in a month.",
-    points: 300,
-    progress: 4,
-    total: 10,
-    status: "active"
-  },
-  {
-    id: 3,
-    title: "Plant-Powered",
-    description: "Eat entirely plant-based meals for 5 consecutive days.",
-    points: 250,
-    progress: 2,
-    total: 5,
-    status: "active"
-  },
-  {
-    id: 4,
-    title: "Energy Saver",
-    description: "Keep your daily home energy usage below your personal average for 14 days.",
-    points: 400,
-    progress: 0,
-    total: 14,
-    status: "available"
-  },
-  {
-    id: 5,
-    title: "Local Locavore",
-    description: "Buy only locally sourced groceries for your meals over the weekend.",
-    points: 150,
-    progress: 0,
-    total: 2,
-    status: "available"
-  },
-  {
-    id: 6,
-    title: "Vampire Slayer",
-    description: "Unplug all unused electronics overnight for a full week.",
-    points: 200,
-    progress: 0,
-    total: 7,
-    status: "available"
-  }
-];
-
-const ChallengeCard = ({ id, title, description, points, progress, total, status, delay, onAction }) => {
+const ChallengeCard = React.memo(({ id, title, description, points, progress, total, status, delay, onAction }) => {
   const percentage = Math.min(100, Math.round((progress / total) * 100));
   
   return (
@@ -100,7 +34,7 @@ const ChallengeCard = ({ id, title, description, points, progress, total, status
           <span className="font-medium text-slate-700">Progress</span>
           <span className="text-slate-500">{progress} / {total} days</span>
         </div>
-        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden" aria-label="Progress bar">
           <div 
             className={`h-full rounded-full transition-all duration-500 ease-out ${
               status === 'completed' ? 'bg-amber-400' : 'bg-forest-500'
@@ -127,7 +61,9 @@ const ChallengeCard = ({ id, title, description, points, progress, total, status
       </div>
     </Card>
   );
-};
+});
+
+ChallengeCard.displayName = 'ChallengeCard';
 
 const getGamificationInfo = (points) => {
   if (points >= 1000) return { level: Math.floor(points / 500) + 1, badge: "Carbon Champion", icon: Award, color: "text-amber-500", bg: "bg-amber-100", border: "border-amber-200", nextTierPts: null };
@@ -135,18 +71,16 @@ const getGamificationInfo = (points) => {
   return { level: Math.floor(points / 100) + 1, badge: "Eco Beginner", icon: Shield, color: "text-blue-500", bg: "bg-blue-100", border: "border-blue-200", nextTierPts: 300 };
 };
 
-const EcoChallenges = () => {
+const EcoChallenges = React.memo(() => {
   const [dailyTask, setDailyTask] = useState("");
   const [isDailyCompleted, setIsDailyCompleted] = useState(false);
   const [totalPoints, setTotalPoints] = useState(0);
   const [challenges, setChallenges] = useState([]);
 
-  // Initialize state from local storage on mount
   useEffect(() => {
-    // 1. Daily Task Logic
     const todayStr = new Date().toLocaleDateString('en-CA');
-    const taskIndex = todayStr.split('-').reduce((acc, val) => acc + parseInt(val, 10), 0) % dailyTasks.length;
-    setDailyTask(dailyTasks[taskIndex]);
+    const taskIndex = todayStr.split('-').reduce((acc, val) => acc + parseInt(val, 10), 0) % DAILY_TASKS.length;
+    setDailyTask(DAILY_TASKS[taskIndex]);
 
     try {
       const storedDaily = JSON.parse(localStorage.getItem('carbonwise_daily_challenge'));
@@ -157,73 +91,71 @@ const EcoChallenges = () => {
         localStorage.setItem('carbonwise_daily_challenge', JSON.stringify({ date: todayStr, completed: false }));
       }
 
-      // 2. Points Logic
       const storedPoints = parseInt(localStorage.getItem('carbonwise_total_points'), 10);
       if (!isNaN(storedPoints)) {
         setTotalPoints(storedPoints);
       } else {
-        // Base points from mock data completed tasks (500)
         setTotalPoints(500); 
-        localStorage.setItem('carbonwise_total_points', 500);
+        localStorage.setItem('carbonwise_total_points', '500');
       }
 
-      // 3. Long Term Challenges Logic
       const storedChallenges = JSON.parse(localStorage.getItem('carbonwise_challenges'));
       if (storedChallenges && storedChallenges.length > 0) {
         setChallenges(storedChallenges);
       } else {
-        setChallenges(initialLongTermChallenges);
-        localStorage.setItem('carbonwise_challenges', JSON.stringify(initialLongTermChallenges));
+        setChallenges(INITIAL_LONG_TERM_CHALLENGES);
+        localStorage.setItem('carbonwise_challenges', JSON.stringify(INITIAL_LONG_TERM_CHALLENGES));
       }
 
     } catch (e) {
       console.error("Error reading local storage", e);
-      setChallenges(initialLongTermChallenges);
+      setChallenges(INITIAL_LONG_TERM_CHALLENGES);
       setTotalPoints(500);
     }
   }, []);
 
-  const addPoints = (points) => {
-    const newTotal = totalPoints + points;
-    setTotalPoints(newTotal);
-    localStorage.setItem('carbonwise_total_points', newTotal.toString());
-  };
+  const addPoints = useCallback((points) => {
+    setTotalPoints(prev => {
+      const newTotal = prev + points;
+      localStorage.setItem('carbonwise_total_points', newTotal.toString());
+      return newTotal;
+    });
+  }, []);
 
-  const completeDailyChallenge = () => {
+  const completeDailyChallenge = useCallback(() => {
     setIsDailyCompleted(true);
     const todayStr = new Date().toLocaleDateString('en-CA');
     localStorage.setItem('carbonwise_daily_challenge', JSON.stringify({ date: todayStr, completed: true }));
-    addPoints(20); // Give 20 points for daily challenge
-  };
+    addPoints(20);
+  }, [addPoints]);
 
-  const handleChallengeAction = (id, actionType) => {
-    const updatedChallenges = challenges.map(challenge => {
-      if (challenge.id === id) {
-        if (actionType === 'start') {
-          return { ...challenge, status: 'active' };
-        } else if (actionType === 'update') {
-          const newProgress = challenge.progress + 1;
-          if (newProgress >= challenge.total) {
-            addPoints(challenge.points);
-            return { ...challenge, progress: challenge.total, status: 'completed' };
+  const handleChallengeAction = useCallback((id, actionType) => {
+    setChallenges(prev => {
+      const updated = prev.map(challenge => {
+        if (challenge.id === id) {
+          if (actionType === 'start') {
+            return { ...challenge, status: 'active' };
+          } else if (actionType === 'update') {
+            const newProgress = challenge.progress + 1;
+            if (newProgress >= challenge.total) {
+              addPoints(challenge.points);
+              return { ...challenge, progress: challenge.total, status: 'completed' };
+            }
+            return { ...challenge, progress: newProgress };
           }
-          return { ...challenge, progress: newProgress };
         }
-      }
-      return challenge;
+        return challenge;
+      });
+      localStorage.setItem('carbonwise_challenges', JSON.stringify(updated));
+      return updated;
     });
-
-    setChallenges(updatedChallenges);
-    localStorage.setItem('carbonwise_challenges', JSON.stringify(updatedChallenges));
-  };
+  }, [addPoints]);
 
   const gamification = getGamificationInfo(totalPoints);
   const BadgeIcon = gamification.icon;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      
-      {/* Header and Gamification Profile */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
         <div>
           <motion.h1 
@@ -249,7 +181,6 @@ const EcoChallenges = () => {
           transition={{ delay: 0.2 }}
           className="bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 w-full md:w-auto"
         >
-          {/* Badge & Level */}
           <div className="flex items-center space-x-3">
             <div className={`p-3 rounded-xl border ${gamification.bg} ${gamification.border}`}>
               <BadgeIcon className={`w-8 h-8 ${gamification.color}`} aria-hidden="true" />
@@ -262,7 +193,6 @@ const EcoChallenges = () => {
           
           <div className="hidden sm:block w-px h-12 bg-slate-200"></div>
           
-          {/* Points */}
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 hidden sm:block">
               <Star className="w-8 h-8 text-amber-500 fill-amber-500" aria-hidden="true" />
@@ -272,7 +202,7 @@ const EcoChallenges = () => {
               <p className="text-2xl font-bold text-slate-800 flex items-baseline">
                 {totalPoints.toLocaleString()}
                 {gamification.nextTierPts && (
-                  <span className="text-xs font-normal text-slate-400 ml-2">/ {gamification.nextTierPts} for next badge</span>
+                  <span className="text-xs font-normal text-slate-400 ml-2">/ {gamification.nextTierPts}</span>
                 )}
               </p>
             </div>
@@ -280,7 +210,6 @@ const EcoChallenges = () => {
         </motion.div>
       </div>
 
-      {/* Daily Challenge Banner */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -320,7 +249,6 @@ const EcoChallenges = () => {
         </Card>
       </motion.div>
 
-      {/* Long-Term Challenges Grid */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-slate-800">Long-Term Goals</h2>
         <span className="text-sm font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full">{challenges.filter(c => c.status === 'completed').length} / {challenges.length} Completed</span>
@@ -338,6 +266,7 @@ const EcoChallenges = () => {
       </div>
     </div>
   );
-};
+});
 
+EcoChallenges.displayName = 'EcoChallenges';
 export default EcoChallenges;

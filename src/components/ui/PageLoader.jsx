@@ -1,6 +1,7 @@
+import React from 'react';
 import { Loader2 } from 'lucide-react';
 
-const PageLoader = () => (
+const PageLoader = React.memo(() => (
   <div className="w-full h-[60vh] flex flex-col items-center justify-center" role="status" aria-live="polite">
     <div className="relative flex items-center justify-center mb-6">
       <div className="absolute inset-0 bg-forest-500 rounded-full animate-ping opacity-20 w-16 h-16"></div>
@@ -10,6 +11,7 @@ const PageLoader = () => (
     </div>
     <p className="text-slate-600 font-medium animate-pulse">Loading CarbonWise...</p>
   </div>
-);
+));
 
+PageLoader.displayName = 'PageLoader';
 export default PageLoader;

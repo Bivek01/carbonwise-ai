@@ -1,40 +1,21 @@
+import React, { Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Code, Shield, Zap, TestTube, Accessibility, Target, 
-  Download, Share2, Award, ArrowUpRight, TrendingUp, AlertTriangle, CheckCircle2 
+  Download, Share2, Award, ArrowUpRight, TrendingUp, AlertTriangle, CheckCircle2, Loader2 
 } from 'lucide-react';
-import { 
-  LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
-} from 'recharts';
 import GlassCard from '../components/ui/GlassCard';
 import CircularProgress from '../components/ui/CircularProgress';
 import Button from '../components/ui/Button';
+import { EVAL_PERFORMANCE_TREND, EVAL_CATEGORY_SCORES, EVAL_SUGGESTIONS } from '../lib/constants';
 
-// Mock Data
-const performanceTrend = [
-  { month: 'Jan', score: 75 },
-  { month: 'Feb', score: 82 },
-  { month: 'Mar', score: 88 },
-  { month: 'Apr', score: 85 },
-  { month: 'May', score: 92 },
-  { month: 'Jun', score: 94 },
-];
+const PerformanceTrendChart = lazy(() => import('../components/charts/PerformanceTrendChart'));
 
-const categoryScores = [
-  { name: 'Code Quality', value: 95, color: '#3b82f6', icon: Code },
-  { name: 'Security', value: 98, color: '#10b981', icon: Shield },
-  { name: 'Efficiency', value: 88, color: '#f59e0b', icon: Zap },
-  { name: 'Testing', value: 92, color: '#8b5cf6', icon: TestTube },
-  { name: 'Accessibility', value: 90, color: '#ec4899', icon: Accessibility },
-  { name: 'Alignment', value: 96, color: '#06b6d4', icon: Target },
-];
-
-const suggestions = [
-  { title: 'Bundle Optimization', desc: 'Implement route-based code splitting to reduce main chunk size by 45%.', priority: 'High', type: 'performance', icon: Zap },
-  { title: 'Accessibility Improvements', desc: 'Add missing aria-labels to navigation elements.', priority: 'Medium', type: 'accessibility', icon: Accessibility },
-  { title: 'Lazy Loading', desc: 'Lazy load heavy charting libraries (Recharts) to improve TTI.', priority: 'High', type: 'performance', icon: ArrowUpRight },
-  { title: 'Security Updates', desc: 'Update 3 minor dependencies with known low-severity CVEs.', priority: 'Low', type: 'security', icon: Shield },
-];
+const ChartLoader = () => (
+  <div className="w-full h-full flex items-center justify-center bg-slate-800/50 rounded-xl border border-white/10">
+    <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" aria-hidden="true" />
+  </div>
+);
 
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -44,10 +25,9 @@ const staggerContainer = {
   }
 };
 
-const AIEvaluationDashboard = () => {
+const AIEvaluationDashboard = React.memo(() => {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 pb-20 selection:bg-emerald-500/30">
-      {/* Background decorations */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-600/20 blur-[120px]" />
         <div className="absolute top-[40%] -right-[10%] w-[40%] h-[40%] rounded-full bg-emerald-600/20 blur-[120px]" />
@@ -55,8 +35,6 @@ const AIEvaluationDashboard = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 relative z-10 space-y-12">
-        
-        {/* Header Actions */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
             <h1 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-blue-400 to-indigo-400 mb-2">
@@ -81,7 +59,6 @@ const AIEvaluationDashboard = () => {
           </motion.div>
         </div>
 
-        {/* Hero Score Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <GlassCard className="lg:col-span-1 flex flex-col items-center justify-center py-10" hover>
             <CircularProgress value={94} max={100} size={220} label="Overall Rating" />
@@ -91,7 +68,7 @@ const AIEvaluationDashboard = () => {
               transition={{ delay: 1 }}
               className="mt-6 flex items-center space-x-2 bg-emerald-500/20 text-emerald-400 px-4 py-1.5 rounded-full border border-emerald-500/30"
             >
-              <Award className="w-4 h-4" />
+              <Award className="w-4 h-4" aria-hidden="true" />
               <span className="font-bold text-sm uppercase tracking-wider">Excellent</span>
             </motion.div>
           </GlassCard>
@@ -107,7 +84,7 @@ const AIEvaluationDashboard = () => {
             ].map((stat, i) => (
               <GlassCard key={i} delay={0.1 * i} hover className="flex flex-col justify-center">
                 <div className="flex items-center text-slate-400 mb-2">
-                  <stat.icon className="w-4 h-4 mr-2" />
+                  <stat.icon className="w-4 h-4 mr-2" aria-hidden="true" />
                   <span className="text-sm font-semibold">{stat.label}</span>
                 </div>
                 <div className="text-2xl sm:text-3xl font-bold text-white">{stat.val}</div>
@@ -116,10 +93,9 @@ const AIEvaluationDashboard = () => {
           </div>
         </div>
 
-        {/* Detailed Score Breakdown */}
         <div>
           <h2 className="text-2xl font-bold mb-6 flex items-center text-white">
-            <TestTube className="w-6 h-6 mr-3 text-blue-400" />
+            <TestTube className="w-6 h-6 mr-3 text-blue-400" aria-hidden="true" />
             Category Breakdown
           </h2>
           <motion.div 
@@ -128,14 +104,14 @@ const AIEvaluationDashboard = () => {
             animate="show"
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {categoryScores.map((cat, i) => {
+            {EVAL_CATEGORY_SCORES.map((cat, i) => {
               const Icon = cat.icon;
               return (
                 <motion.div key={i} variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}>
                   <GlassCard hover className="h-full">
                     <div className="flex justify-between items-start mb-4">
                       <div className="p-3 rounded-xl bg-white/5 border border-white/10" style={{ color: cat.color }}>
-                        <Icon className="w-6 h-6" />
+                        <Icon className="w-6 h-6" aria-hidden="true" />
                       </div>
                       <span className={`px-2.5 py-1 text-xs font-bold rounded-md ${
                         cat.value >= 90 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
@@ -149,7 +125,7 @@ const AIEvaluationDashboard = () => {
                     <div className="flex items-end justify-between mb-2">
                       <span className="text-3xl font-black text-white">{cat.value}<span className="text-sm text-slate-500">/100</span></span>
                     </div>
-                    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden" aria-label={`${cat.name} score bar`}>
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${cat.value}%` }}
@@ -165,44 +141,26 @@ const AIEvaluationDashboard = () => {
           </motion.div>
         </div>
 
-        {/* Analytics & Suggestions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
           <GlassCard delay={0.6} className="h-[450px] flex flex-col">
             <h3 className="text-xl font-bold mb-6 flex items-center text-white">
-              <TrendingUp className="w-5 h-5 mr-3 text-emerald-400" />
+              <TrendingUp className="w-5 h-5 mr-3 text-emerald-400" aria-hidden="true" />
               Performance Trend
             </h3>
-            <div className="flex-grow w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={performanceTrend}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
-                  <XAxis dataKey="month" stroke="#ffffff50" tick={{fill: '#94a3b8'}} axisLine={false} tickLine={false} />
-                  <YAxis stroke="#ffffff50" tick={{fill: '#94a3b8'}} axisLine={false} tickLine={false} domain={[60, 100]} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #ffffff20', borderRadius: '8px', color: '#fff' }}
-                    itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="score" 
-                    stroke="#10b981" 
-                    strokeWidth={4}
-                    dot={{ fill: '#0f172a', stroke: '#10b981', strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6, fill: '#10b981', stroke: '#fff' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+            <div className="flex-grow w-full" aria-label="Performance trend chart" role="region">
+              <Suspense fallback={<ChartLoader />}>
+                <PerformanceTrendChart data={EVAL_PERFORMANCE_TREND} />
+              </Suspense>
             </div>
           </GlassCard>
 
           <GlassCard delay={0.7} className="h-[450px] flex flex-col">
             <h3 className="text-xl font-bold mb-6 flex items-center text-white">
-              <Zap className="w-5 h-5 mr-3 text-amber-400" />
+              <Zap className="w-5 h-5 mr-3 text-amber-400" aria-hidden="true" />
               AI Recommendations
             </h3>
             <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-grow">
-              {suggestions.map((sug, i) => {
+              {EVAL_SUGGESTIONS.map((sug, i) => {
                 const Icon = sug.icon;
                 return (
                   <motion.div 
@@ -215,7 +173,7 @@ const AIEvaluationDashboard = () => {
                     <div className="flex items-start justify-between">
                       <div className="flex gap-4">
                         <div className="p-2 bg-slate-800 rounded-lg text-slate-400 group-hover:text-white transition-colors">
-                          <Icon className="w-5 h-5" />
+                          <Icon className="w-5 h-5" aria-hidden="true" />
                         </div>
                         <div>
                           <h4 className="font-bold text-slate-200 mb-1">{sug.title}</h4>
@@ -235,11 +193,11 @@ const AIEvaluationDashboard = () => {
               })}
             </div>
           </GlassCard>
-
         </div>
       </div>
     </div>
   );
-};
+});
 
+AIEvaluationDashboard.displayName = 'AIEvaluationDashboard';
 export default AIEvaluationDashboard;

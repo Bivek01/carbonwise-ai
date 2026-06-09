@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Lightbulb, Clock, ChevronRight, AlertCircle, RefreshCw } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { getSustainabilityInsights } from '../services/gemini';
 
-const InsightCard = ({ title, description, impact, difficulty, category, delay }) => (
+const InsightCard = React.memo(({ title, description, impact, difficulty, category, delay }) => (
   <Card delay={delay} hover className="relative overflow-hidden group flex flex-col h-full">
     <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-forest-100 to-transparent rounded-bl-[100px] -z-10 transition-transform group-hover:scale-110" />
     
@@ -27,7 +27,7 @@ const InsightCard = ({ title, description, impact, difficulty, category, delay }
     
     <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
       <div className="flex items-center text-xs text-slate-500 font-medium">
-        <Clock className="w-3.5 h-3.5 mr-1" />
+        <Clock className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
         {difficulty}
       </div>
       <button className="text-forest-600 hover:text-forest-700 font-medium text-sm flex items-center transition-colors">
@@ -35,33 +35,35 @@ const InsightCard = ({ title, description, impact, difficulty, category, delay }
       </button>
     </div>
   </Card>
-);
+));
 
-const AIInsights = () => {
+InsightCard.displayName = 'InsightCard';
+
+// Mock data representing the user's footprint to send to Gemini
+const mockFootprintData = {
+  totalEmissionsKg: 4250,
+  transport: {
+    type: "Gasoline Car",
+    distanceKmPerDay: 30,
+    annualEmissionsKg: 2100
+  },
+  electricity: {
+    kwhPerMonth: 400,
+    annualEmissionsKg: 1920
+  },
+  diet: {
+    type: "Mixed (Average Meat)",
+    annualEmissionsKg: 2500
+  }
+};
+
+const AIInsights = React.memo(() => {
   const [insights, setInsights] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFallback, setIsFallback] = useState(false);
 
-  // Mock data representing the user's footprint to send to Gemini
-  const mockFootprintData = {
-    totalEmissionsKg: 4250,
-    transport: {
-      type: "Gasoline Car",
-      distanceKmPerDay: 30,
-      annualEmissionsKg: 2100
-    },
-    electricity: {
-      kwhPerMonth: 400,
-      annualEmissionsKg: 1920
-    },
-    diet: {
-      type: "Mixed (Average Meat)",
-      annualEmissionsKg: 2500
-    }
-  };
-
-  const fetchInsights = async () => {
+  const fetchInsights = useCallback(async () => {
     setLoading(true);
     setError(null);
     setIsFallback(false);
@@ -88,12 +90,11 @@ const AIInsights = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchInsights();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchInsights]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -156,7 +157,7 @@ const AIInsights = () => {
           ))}
           <div className="col-span-full text-center mt-8">
             <div className="inline-flex items-center text-forest-600 font-medium">
-              <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+              <RefreshCw className="w-5 h-5 mr-2 animate-spin" aria-hidden="true" />
               AI is analyzing your footprint...
             </div>
           </div>
@@ -176,7 +177,7 @@ const AIInsights = () => {
               animate={{ opacity: 1, y: 0 }}
               className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3"
             >
-              <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" aria-hidden="true" />
               <p className="text-amber-800 text-sm font-medium">
                 AI quota currently unavailable. Showing smart local recommendations.
               </p>
@@ -191,6 +192,7 @@ const AIInsights = () => {
       )}
     </div>
   );
-};
+});
 
+AIInsights.displayName = 'AIInsights';
 export default AIInsights;

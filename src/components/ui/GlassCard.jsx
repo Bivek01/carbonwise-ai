@@ -1,6 +1,7 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 
-const GlassCard = ({ children, className = '', delay = 0, hover = false }) => {
+const GlassCard = React.memo(({ children, className = '', delay = 0, hover = false }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -17,6 +18,7 @@ const GlassCard = ({ children, className = '', delay = 0, hover = false }) => {
       </div>
     </motion.div>
   );
-};
+});
 
+GlassCard.displayName = 'GlassCard';
 export default GlassCard;
