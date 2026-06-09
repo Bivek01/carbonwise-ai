@@ -135,16 +135,31 @@ const AIInsights = () => {
       </div>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 min-h-[400px]" role="status" aria-live="polite">
-          <div className="relative w-20 h-20 mb-6">
-            <div className="absolute inset-0 rounded-full border-4 border-slate-100"></div>
-            <div className="absolute inset-0 rounded-full border-4 border-forest-500 border-t-transparent animate-spin"></div>
-            <Lightbulb className="absolute inset-0 m-auto w-8 h-8 text-forest-500 animate-pulse" aria-hidden="true" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="status" aria-live="polite">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="animate-pulse flex flex-col h-[280px]">
+              <div className="flex justify-between items-start mb-4">
+                <div className="h-6 bg-slate-200 rounded-md w-24"></div>
+                <div className="h-6 bg-slate-200 rounded-md w-20"></div>
+              </div>
+              <div className="h-6 bg-slate-200 rounded-md w-3/4 mb-4"></div>
+              <div className="space-y-2 mb-6 flex-grow">
+                <div className="h-4 bg-slate-200 rounded-md w-full"></div>
+                <div className="h-4 bg-slate-200 rounded-md w-5/6"></div>
+                <div className="h-4 bg-slate-200 rounded-md w-4/6"></div>
+              </div>
+              <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
+                <div className="h-4 bg-slate-200 rounded-md w-16"></div>
+                <div className="h-4 bg-slate-200 rounded-md w-20"></div>
+              </div>
+            </Card>
+          ))}
+          <div className="col-span-full text-center mt-8">
+            <div className="inline-flex items-center text-forest-600 font-medium">
+              <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+              AI is analyzing your footprint...
+            </div>
           </div>
-          <h3 className="text-xl font-bold text-slate-800 mb-2">Analyzing your footprint...</h3>
-          <p className="text-slate-500 text-center max-w-sm">
-            Gemini is evaluating your transport, energy, and diet habits to find the best reduction strategies.
-          </p>
         </div>
       ) : error ? (
         <div className="bg-rose-50 border border-rose-200 rounded-2xl p-8 text-center max-w-2xl mx-auto my-12">

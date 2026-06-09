@@ -9,6 +9,7 @@ const AIInsights = lazy(() => import('./pages/AIInsights'));
 const EcoChallenges = lazy(() => import('./pages/EcoChallenges'));
 const ProgressTracker = lazy(() => import('./pages/ProgressTracker'));
 const GeminiTest = lazy(() => import('./pages/GeminiTest'));
+const AIEvaluationDashboard = lazy(() => import('./pages/AIEvaluationDashboard'));
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="challenges" element={<EcoChallenges />} />
           <Route path="progress" element={<ProgressTracker />} />
           <Route path="test" element={<GeminiTest />} />
+          <Route path="evaluation" element={<AIEvaluationDashboard />} />
         </Route>
       </Routes>
     </Router>

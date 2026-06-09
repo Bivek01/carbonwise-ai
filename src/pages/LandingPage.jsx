@@ -104,22 +104,36 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 relative">
-        <div className="absolute inset-0 bg-forest-900 -z-10" />
-        {/* Subtle pattern */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent -z-10" />
+      <section className="py-28 relative overflow-hidden bg-slate-50">
+        {/* Subtle premium gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-slate-50 to-blue-50/50 z-0" />
         
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Ready to make a difference?</h2>
-          <p className="text-forest-100 text-lg mb-10 max-w-2xl mx-auto">
+        {/* Floating background decorations */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-200/20 rounded-full blur-3xl z-0" />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl z-0" />
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10"
+        >
+          <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
+            Ready to make a difference?
+          </h2>
+          <p className="text-slate-600 text-lg md:text-xl font-medium mb-12 max-w-2xl mx-auto leading-relaxed">
             Join thousands of users who have already reduced their carbon footprint by an average of 15% in their first month.
           </p>
-          <Link to="/calculator">
-            <Button size="lg" className="bg-white text-forest-900 hover:bg-forest-50 border-none shadow-xl">
+          <Link to="/calculator" className="inline-block">
+            <Button 
+              size="lg" 
+              className="bg-gradient-to-r from-emerald-500 to-forest-600 hover:from-emerald-400 hover:to-forest-500 text-white border-none shadow-xl shadow-emerald-500/30 font-bold px-10 py-4 text-lg transition-all hover:scale-105"
+            >
               Start Your Journey
             </Button>
           </Link>
-        </div>
+        </motion.div>
       </section>
     </div>
   );

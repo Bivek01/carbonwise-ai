@@ -12,6 +12,7 @@ const NavLinks = ({ mobile, closeMenu }) => {
     { name: 'Insights', path: '/insights' },
     { name: 'Challenges', path: '/challenges' },
     { name: 'Progress', path: '/progress' },
+    { name: 'Evaluation', path: '/evaluation' },
   ];
 
   return (
